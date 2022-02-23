@@ -11,7 +11,9 @@
     "start": "tsc && node ."
   },
   "dependencies": {
-    "discord.js": "^13.6.0"
+    "discord.js": "^13.6.0",
+    "glob": "^7.2.0",
+    "log4js": "^6.4.1"
   },
   "devDependencies": {
     "eslint": "^8.9.0",

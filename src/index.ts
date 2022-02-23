@@ -1,6 +1,6 @@
 console.clear();
 
-import { Ninym } from "./Core/ninym";
+import { Ninym } from "./Core/Ninym";
 import * as File from "./config.json";
 import { Config } from "./Core/NinymInterfaces";
 
