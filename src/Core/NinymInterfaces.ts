@@ -1,4 +1,4 @@
-import type { ApplicationCommandOptionData, CommandInteraction, Message } from "discord.js";
+import type { CommandInteraction, Message } from "discord.js";
 import type { Ninym } from "./Ninym";
 
 export interface ExtensionEmit {
@@ -10,7 +10,7 @@ export interface Config {
 }
 
 export interface EventRun {
-    (client: Ninym, ...args: any[]): Promise<void>; 
+    (client: Ninym, ...args: any[]): Promise<void>;
 }
 
 export interface CommandRun {
@@ -30,13 +30,12 @@ export interface Extension {
 }
 
 export interface Event {
-    name: string;
     run: EventRun;
+    name: string;
 }
 
 export interface Command {
-    name: string;
     run: CommandRun;
-    description?: string;
-    options?: ApplicationCommandOptionData[];
+    _registrarName: string;
+    builderData: object;
 }

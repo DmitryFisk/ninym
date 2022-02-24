@@ -1,15 +1,19 @@
 import { Client, Collection, Intents } from "discord.js";
-import { Config, Extension, NinymOptions } from "./NinymInterfaces";
+import type { Command, Config, Extension, NinymOptions, Event } from "./NinymInterfaces";
 import { getLogger, Logger } from "log4js";
 import { ExtensionsManager } from "./ExtensionsManager";
+import { REST } from "@discordjs/rest";
+import { Routes } from "discord-api-types/v9";
 
 export class Ninym extends Client {
     private isDebug: boolean = false;
     private config: Config;
-    private coreLogger: Logger = this.getNinymLogger("CORE");
+    private coreLogger: Logger = this.getNinymLogger("Core");
     public logger: (loggerName: string) => Logger = this.getNinymLogger;
 
     public extensions: Collection<string, Extension> = new Collection();
+    public commands: Collection<string, Command> = new Collection();
+    public events: Collection<string, Event> = new Collection();
 
     constructor() {
         super({
@@ -30,8 +34,41 @@ export class Ninym extends Client {
 
         this.coreLogger.info(`Welcome, ${process.env.USERNAME}`);
 
+        if (this.isDebug) {
+            this.coreLogger.level = "debug";
+            this.coreLogger.debug(`DEBUG MODE`);
+            this.coreLogger.level = "info";
+        }
+
         this.login(this.config.token).then(() => {
-            new ExtensionsManager(this).loadExtension("TestExtension");
+            const extManager = new ExtensionsManager(this);
+            extManager.loadExtension("Registrar");
         });
+    }
+
+    public async registerSlashCommands(): Promise<void> {
+        const commands: object[] = this.commands.map(
+            ({ run, ...data }: Command): object => data.builderData
+        );
+        const rest = new REST({ version: "9" }).setToken(this.config.token);
+
+        (async (): Promise<void> => {
+            try {
+                this.coreLogger.info(`Started refreshing application (/) commands`);
+
+                await rest.put(
+                    this.isDebug
+                        ? Routes.applicationGuildCommands(this.user.id, "818556791633739826")
+                        : Routes.applicationCommands(this.user.id),
+                    { body: commands }
+                );
+
+                this.coreLogger.info(`Successfully reloaded application (/) commands`);
+            } catch (err: any) {
+                this.coreLogger.level = "error";
+                this.coreLogger.error(err.stack);
+                this.coreLogger.level = "info";
+            }
+        })();
     }
 }
