@@ -9,7 +9,6 @@ export class ExtensionsManager {
     constructor(client: Ninym) {
         this.client = client;
         this.logger = client.logger("ExtensionsManager");
-        this.logger.level = "info";
     }
 
     public async loadExtension(extName: string): Promise<void> {

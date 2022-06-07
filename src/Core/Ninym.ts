@@ -1,6 +1,6 @@
 import { Client, Collection, Intents } from "discord.js";
 import type { Command, Config, Extension, NinymOptions, Event } from "./NinymInterfaces";
-import { getLogger, Logger } from "log4js";
+import { getLogger, Logger, configure } from "log4js";
 import { ExtensionsManager } from "./ExtensionsManager";
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
@@ -23,21 +23,29 @@ export class Ninym extends Client {
     }
 
     private getNinymLogger(loggerName: string): Logger {
-        const logger: Logger = getLogger(loggerName);
-        return logger;
+        configure({
+            appenders: {
+                console: { type: "stdout" },
+                file: { type: "file", filename: "log.txt" }
+            },
+            categories: {
+                default: {
+                    appenders: ["console", "file"],
+                    level: "debug"
+                }
+            }
+        });
+        return getLogger(loggerName);
     }
 
     public async start(options: NinymOptions): Promise<void> {
-        this.coreLogger.level = "info";
         this.config = options.config;
         this.isDebug = options.isDebug;
 
         this.coreLogger.info(`Welcome, ${process.env.USERNAME}`);
 
         if (this.isDebug) {
-            this.coreLogger.level = "debug";
             this.coreLogger.debug(`DEBUG MODE`);
-            this.coreLogger.level = "info";
         }
 
         this.login(this.config.token).then(() => {
@@ -65,9 +73,7 @@ export class Ninym extends Client {
 
                 this.coreLogger.info(`Successfully reloaded application (/) commands`);
             } catch (err: any) {
-                this.coreLogger.level = "error";
                 this.coreLogger.error(err.stack);
-                this.coreLogger.level = "info";
             }
         })();
     }

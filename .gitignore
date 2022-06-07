@@ -2,3 +2,4 @@ config.json
 node_modules
 .prettierc
 build
+log.txt

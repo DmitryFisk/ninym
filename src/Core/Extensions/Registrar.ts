@@ -5,7 +5,6 @@ import { Command, ExtensionEmit, Event } from "../NinymInterfaces";
 
 export const load: ExtensionEmit = async (client: Ninym): Promise<void> => {
     const logger: Logger = client.logger("Registrar")
-    logger.level = "info";
 
     const commandFiles: IGlobBase = await new GlobSync(`${__dirname}/../../Commands/*.js`);
     commandFiles.found.map(async (value: string) => {
@@ -21,9 +20,7 @@ export const load: ExtensionEmit = async (client: Ninym): Promise<void> => {
         try {
             client.on(file.name, file.run.bind(null, client));
         } catch (err: any) {
-            logger.level = "error";
             logger.error(`${err.stack}`);
-            logger.level = "info";
         }
     });
 };

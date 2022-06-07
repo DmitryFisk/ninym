@@ -6,7 +6,6 @@ export const run: EventRun = async (client: Ninym): Promise<void> => {
     await client.application.fetch();
 
     const logger: Logger = client.logger("Bot");
-    logger.level = "info";
 
     logger.info(`Started as ${client.user.tag}`);
     client.user.setActivity(`burunyaaa`, { type: "COMPETING" });

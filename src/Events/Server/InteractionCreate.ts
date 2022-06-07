@@ -32,9 +32,7 @@ export const run: EventRun = async (
                 ephemeral: true
             });
 
-            logger.level = "error";
             logger.error(err.stack.split("\n")[0]);
-            logger.level = "info";
         }
     }
 };
