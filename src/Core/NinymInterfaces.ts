@@ -5,16 +5,17 @@ export interface ExtensionEmit {
     (client: Ninym, ...args: any[]): Promise<void>;
 }
 
-export interface Config {
-    token: string;
-}
-
 export interface EventRun {
     (client: Ninym, ...args: any[]): Promise<void>;
 }
 
 export interface CommandRun {
     (client: Ninym, interaction: CommandInteraction): Promise<void | Message>;
+}
+
+export interface Config {
+    token: string;
+    debugToken: string;
 }
 
 export interface NinymOptions {

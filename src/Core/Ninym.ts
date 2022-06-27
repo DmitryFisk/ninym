@@ -35,6 +35,7 @@ export class Ninym extends Client {
                 }
             }
         });
+        
         return getLogger(loggerName);
     }
 
@@ -48,7 +49,7 @@ export class Ninym extends Client {
             this.coreLogger.debug(`DEBUG MODE`);
         }
 
-        this.login(this.config.token).then(() => {
+        this.login(this.isDebug ? this.config.debugToken : this.config.token).then(() => {
             const extManager = new ExtensionsManager(this);
             extManager.loadExtension("Registrar");
         });
@@ -58,7 +59,7 @@ export class Ninym extends Client {
         const commands: object[] = this.commands.map(
             ({ run, ...data }: Command): object => data.builderData
         );
-        const rest = new REST({ version: "9" }).setToken(this.config.token);
+        const rest = new REST({ version: "9" }).setToken(this.isDebug ? this.config.debugToken : this.config.token);
 
         (async (): Promise<void> => {
             try {
